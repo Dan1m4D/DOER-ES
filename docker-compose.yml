@@ -1,0 +1,36 @@
+services:
+    # frontend:
+    #     build: ./frontend
+    #     ports:
+    #         - "3000:3000"
+        
+    #     volumes:
+    #         - ./frontend:/frontend
+    
+    backend:
+        build: ./backend
+        ports:
+            - "8000:8000"
+        depends_on:
+            - postgres_db
+        volumes:
+          - ./backend:/backend
+    
+    postgres_db:
+        image: postgres:15
+        hostname: postgres_db
+        container_name: postgres_db
+        restart: unless-stopped
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+        volumes:
+            # - ./postgres_db/postgres_data:/var/lib/postgresql/data # Persist data even after container is removed 
+            - postgres_data:/var/lib/postgresql/data # Persist data even after container is removed -> on volume
+            - ./postgres_db/init.sql:/docker-entrypoint-initdb.d/init.sql # Run init.sql script to create tables
+
+volumes:
+    postgres_data: # Define volume for postgres_db service
