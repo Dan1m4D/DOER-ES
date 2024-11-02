@@ -1,10 +1,14 @@
 FROM node:22-slim
 
+RUN npm install -g pnpm
+
 WORKDIR /frontend
 
+COPY package.json pnpm-lock.yaml .npmrc ./
+RUN pnpm install
+
 COPY . .
-RUN yarn install
 
 EXPOSE 3000
 
-CMD ["yarn", "dev"]
+CMD ["pnpm", "dev"]

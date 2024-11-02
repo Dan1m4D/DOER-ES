@@ -1,11 +1,12 @@
 services:
-    # frontend:
-    #     build: ./frontend
-    #     ports:
-    #         - "3000:3000"
+    frontend:
+        build: ./frontend
+        ports:
+            - "3000:3000"
         
-    #     volumes:
-    #         - ./frontend:/frontend
+        volumes:
+            - ./frontend:/frontend
+            - /frontend/node_modules  # Ensure node_modules are not overridden
     
     backend:
         build: ./backend
