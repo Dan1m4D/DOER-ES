@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.radial-gradient-blue {
+    background: radial-gradient(77.85% 61.24% at 20.08% 55.48%, #44AAA9 0%, #FFF 100%);
+}
+
+.radial-gradient-purple {
+    background: radial-gradient(77.85% 61.24% at 20.08% 55.48%, #9747FF 0%, #FFF 100%);
+}
