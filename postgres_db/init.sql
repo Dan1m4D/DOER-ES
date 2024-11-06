@@ -17,8 +17,8 @@ DO
 $$
 BEGIN
     IF NOT EXISTS (
-        SELECT FROM pg_catalog.pg_user
-        WHERE username = 'doer_sudo_admin'
+        SELECT FROM pg_catalog.pg_roles
+        WHERE rolname = 'doer_sudo_admin'
     ) THEN
         CREATE USER doer_sudo_admin WITH SUPERUSER PASSWORD 'doer_sudo_password_1234';
     END IF;

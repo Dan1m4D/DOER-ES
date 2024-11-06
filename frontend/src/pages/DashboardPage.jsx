@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card, Button, Input } from "@nextui-org/react";
+import AppNavbar from "../components/Navbar";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -23,7 +24,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="max-w-3xl px-4 py-10 mx-auto">
+    <main className="max-w-3xl px-4 py-10 mx-auto">
+      <AppNavbar />
       {/* Dashboard Title */}
       <div className="mb-8 text-center">
         <h2 className="text-4xl font-bold">Task Dashboard</h2>
@@ -64,7 +66,7 @@ const Dashboard = () => {
           </p>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 
