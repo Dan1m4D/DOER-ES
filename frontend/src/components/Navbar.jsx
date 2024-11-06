@@ -15,6 +15,7 @@ import logo from "../assets/logo.svg";
 import { CgLogOut } from "react-icons/cg";
 import { useUserStore } from "../stores/userStore";
 import { googleLogout } from "@react-oauth/google";
+import "../index.css"
 
 const AppNavbar = () => {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
@@ -31,8 +32,8 @@ const AppNavbar = () => {
   }
   
   return (
-    <Navbar position="static">
-      <NavbarBrand className="flex items-center">
+    <Navbar position="sticky" variant="floating">
+      <NavbarBrand className="flex items-center" as={Link} href={"/"}>
         <img src={logo} alt="Logo" className="h-[3rem] aspect-auto p-2" />
         <p className="font-bold text-2xl text-[#44AAA9]">DOER</p>
       </NavbarBrand>

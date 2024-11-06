@@ -6,6 +6,14 @@
     background: radial-gradient(77.85% 61.24% at 20.08% 55.48%, #44AAA9 0%, #FFF 100%);
 }
 
+.radial-gradient-blue-bg {
+    background: radial-gradient(77.85% 61.24% at 20.08% 55.48%, #44AAA9 0%, #1e1e1e 100%);
+}
+
 .radial-gradient-purple {
     background: radial-gradient(77.85% 61.24% at 20.08% 55.48%, #9747FF 0%, #FFF 100%);
+}
+
+.glass {
+    @apply h-full w-full bg-white bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-50 border border-gray-100/30
 }
