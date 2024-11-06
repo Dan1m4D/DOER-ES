@@ -1,16 +1,20 @@
 services:
-    # frontend:
-    #     build: ./frontend
-    #     ports:
-    #         - "3000:3000"
-        
-    #     volumes:
-    #         - ./frontend:/frontend
+    frontend:
+        build: ./frontend
+        ports:
+            - "3000:3000"
+        env_file:
+            - .env        
+        volumes:
+            - ./frontend:/frontend
+            - /frontend/node_modules  # Ensure node_modules are not overridden
     
     backend:
         build: ./backend
         ports:
             - "8000:8000"
+        env_file:
+            - .env
         depends_on:
             - postgres_db
         volumes:
@@ -18,7 +22,6 @@ services:
     
     postgres_db:
         image: postgres:15
-        hostname: postgres_db
         container_name: postgres_db
         restart: unless-stopped
         ports:
@@ -31,6 +34,12 @@ services:
             # - ./postgres_db/postgres_data:/var/lib/postgresql/data # Persist data even after container is removed 
             - postgres_data:/var/lib/postgresql/data # Persist data even after container is removed -> on volume
             - ./postgres_db/init.sql:/docker-entrypoint-initdb.d/init.sql # Run init.sql script to create tables
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            
 
 volumes:
     postgres_data: # Define volume for postgres_db service
