@@ -1,9 +1,21 @@
-// src/components/Dashboard.js
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Button, Input } from "@nextui-org/react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getTasks } from "../actions/TaskActions";
 
 const Dashboard = () => {
+  
+  const {data: all_Tasks, isLoading}  = useQuery({
+    queryKey: ["tasks"],
+    queryFn: async () => getTasks(),
+  });
+  
+  useEffect(() => {
+    if (all_Tasks) {
+      console.log("all_tasks: ",all_Tasks);
+    }
+  }, [all_Tasks]);
+  
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
