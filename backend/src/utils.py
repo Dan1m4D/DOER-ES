@@ -19,3 +19,4 @@ def get_google_info():
     google_info["client_id"] = os.getenv("GOOGLE_CLIENT_ID")
     google_info["client_secret"] = os.getenv("GOOGLE_CLIENT_SECRET")
     return google_info
+

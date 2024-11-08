@@ -8,7 +8,7 @@ import clsx from "clsx";
   type: PropTypes.oneOf(["error", "success", "warning", "info"]).isRequired,
 }; */
 
-const Toast = ({ message, type }) => {
+const Toast = ({ message, type, className }) => {
 
   const renderIcon = () => {
     switch (type) {
@@ -27,12 +27,13 @@ const Toast = ({ message, type }) => {
   return (
     <div
       className={clsx(
-        "absolute right-1 p-4 text-center text-white rounded-md shadow-lg bottom-20",
+        "fixed right-1 p-4 text-center text-white rounded-md shadow-lg bottom-1 z-40",
+        className,
         {
-          "bg-red-500/50": type === "error",
-          "bg-green-500/50": type === "success",
-          "bg-amber-500/50": type === "warning",
-          "bg-cyan-500/50": type === "info",
+          "bg-red-500/90": type === "error",
+          "bg-green-500/90": type === "success",
+          "bg-amber-500/90": type === "warning",
+          "bg-cyan-500/90": type === "info",
         }
       )}
     >

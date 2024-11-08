@@ -35,19 +35,17 @@ def get_all_tasks(request: Request, db: Session = Depends(get_db)):
 
 @router.post("")
 @authenticated()
-async def create_new_task(
+def create_new_task(
     task: TaskCreate, request: Request, db: Session = Depends(get_db)
 ):
     # get request access_token
     access_token = request.cookies.get("access_token")
-
     # validate token
     idinfo = validate_token(access_token)
-
     # get user email
     user_email = idinfo.get("email")
 
     # create new task
     new_task = create_task(db, task, user_email)
 
-    return JSONResponse(content=new_task.dict(), status_code=201)
+    return JSONResponse(content="Task created succesfully", status_code=201)

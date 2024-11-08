@@ -1,15 +1,17 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 from ..models import Task
 from ..schemas import TaskCreate, TaskUpdate
 
-def create_task(db: Session, task: TaskCreate, user_email: str) -> Task:
+def create_task(db: Session, task: TaskCreate, user_email) -> Task:
+
     new_task = Task(
         title=task.title,
         description=task.description,
         user_email=user_email,
+        timestamp=task.timestamp,
     )
-
 
     db.add(new_task)
     db.commit()

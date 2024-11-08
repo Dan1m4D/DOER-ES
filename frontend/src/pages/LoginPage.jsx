@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../index.css";
 import { Card, CardBody, Spinner } from "@nextui-org/react";
 import { GoogleLogin } from "@react-oauth/google";
@@ -8,7 +8,6 @@ import { jwtDecode } from "jwt-decode";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { login_image } from "../assets/images";
-import { useEffect } from "react";
 import Toast from "../components/Toast";
 
 const LoginPage = () => {
@@ -23,6 +22,7 @@ const LoginPage = () => {
   );
   const [_cookies, setCookie] = useCookies();
 
+  // redirect to dashboard if login is successful
   useEffect(() => {
     if (success) {
       setTimeout(() => {
@@ -31,6 +31,7 @@ const LoginPage = () => {
     }
   }, [success, navigate]);
 
+  // show toast if user tries to access dashboard without logging in
   useEffect(() => {
     if (notLoggedIn) {
       setTimeout(() => {
@@ -39,6 +40,8 @@ const LoginPage = () => {
     }
   }, [notLoggedIn]);
 
+
+  // on successful login, set cookie and login user
   const onSuccess = (res) => {
     const credential = res.credential;
 
@@ -50,6 +53,7 @@ const LoginPage = () => {
     setSuccess(true);
   };
 
+  // on failed login, set success to false
   const onFailure = (response) => {
     setSuccess(false);
     console.log(response);

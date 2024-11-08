@@ -4,8 +4,7 @@ from typing import Optional
 class TaskBase(BaseModel):
     title: str
     description: str
-    timestamp: str
-    user_email: str
+    timestamp: int
     tags: Optional[str] = None
     deadline: Optional[str] = None
     priority: Optional[str] = None
@@ -18,7 +17,7 @@ class TaskCreate(TaskBase):
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    timestamp: Optional[str] = None
+    update_timestamp: Optional[int] = None
     user_email: Optional[str] = None
     tags: Optional[str] = None
     deadline: Optional[str] = None
