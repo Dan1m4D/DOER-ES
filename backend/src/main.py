@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 from .models import Base
 from .database import engine
-from sqlalchemy.orm import Session
+from .endpoints import tasks_endpoints
 
 # create app
 app = FastAPI()
@@ -22,6 +23,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# include routers
+app.include_router(tasks_endpoints.router, tags=["Tasks"], prefix="/task")
 
 @app.get("/")
 async def root():

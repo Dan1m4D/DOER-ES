@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import RootLayout from "./pages/RootLayout";
 import ErrorPage from "./pages/ErrorPage";
+import RequireAuth from "./auth/RequireAuth";
 
 export const router = createBrowserRouter([
   {
@@ -20,8 +21,13 @@ export const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: "/my",
-        element: <DashboardPage />,
+        element: <RequireAuth />,
+        children: [
+          {
+            path: "/my",
+            element: <DashboardPage />,
+          },
+        ],
       },
     ],
   },

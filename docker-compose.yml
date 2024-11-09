@@ -1,45 +1,48 @@
+version: '3'
+
 services:
-    frontend:
-        build: ./frontend
-        ports:
-            - "3000:3000"
-        env_file:
-            - .env        
-        volumes:
-            - ./frontend:/frontend
-            - /frontend/node_modules  # Ensure node_modules are not overridden
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules # Ensure node_modules are not overridden
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/backend
+
+  postgres_db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      # - ./postgres_db/postgres_data:/var/lib/postgresql/data # Persist data even after container is removed
+      - postgres_data:/var/lib/postgresql/data # Persist data even after container is removed -> on volume
+      - ./postgres_db/init.sql:/docker-entrypoint-initdb.d/init.sql # Run init.sql script to create tables
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     
-    backend:
-        build: ./backend
-        ports:
-            - "8000:8000"
-        env_file:
-            - .env
-        depends_on:
-            - postgres_db
-        volumes:
-          - ./backend:/backend
-    
-    postgres_db:
-        image: postgres:15
-        container_name: postgres_db
-        restart: unless-stopped
-        ports:
-            - "5432:5432"
-        environment:
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DB: ${POSTGRES_DB}
-        volumes:
-            # - ./postgres_db/postgres_data:/var/lib/postgresql/data # Persist data even after container is removed 
-            - postgres_data:/var/lib/postgresql/data # Persist data even after container is removed -> on volume
-            - ./postgres_db/init.sql:/docker-entrypoint-initdb.d/init.sql # Run init.sql script to create tables
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-            interval: 10s
-            timeout: 5s
-            retries: 5
-            
 
 volumes:
-    postgres_data: # Define volume for postgres_db service
+  postgres_data: # Define volume for postgres_db service

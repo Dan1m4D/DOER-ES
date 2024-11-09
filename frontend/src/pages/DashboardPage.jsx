@@ -1,69 +1,66 @@
-// src/components/Dashboard.js
-
-import { useState } from "react";
-import { Card, Button, Input } from "@nextui-org/react";
+import { useState, useEffect } from "react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  useDisclosure,
+} from "@nextui-org/react";
+import { useQuery } from "@tanstack/react-query";
+import { getTasks } from "../actions/TaskActions";
+import { useUserStore } from "../stores/userStore";
+import { FaPlus } from "react-icons/fa";
+import AddTaskModal from "../components/AddTaskModal";
+import Toast from "../components/Toast";
+import TaskCard from "../components/TaskCard";
 
 const Dashboard = () => {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState("");
+  const username = useUserStore((state) => state.username);
+  const [showFeedback, setShowFeedback] = useState(null);
 
-  // Function to handle adding a task
-  const addTask = () => {
-    if (newTask.trim()) {
-      setTasks([...tasks, { id: Date.now(), name: newTask }]);
-      setNewTask(""); // Reset input after adding
-    }
-  };
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  console.log(tasks);
-
-  // Function to handle deleting a task
-  const deleteTask = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
-  };
+  // get user tasks
+  const { data: all_Tasks, isLoading } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: async () => getTasks(),
+  });
 
   return (
-    <main className="max-w-3xl px-4 py-10 mx-auto grow">
-      {/* Dashboard Title */}
-      <div className="mb-8 text-center">
-        <h2 className="text-4xl font-bold">Task Dashboard</h2>
-      </div>
+    <main className="grid grid-cols-8 gap-4 p-4 mx-[5%] my-4 grid-rows-8 grow">
+      <section className="col-span-7 row-span-1 row-start-1 p-2 rounded-md">
+        <h1 className="text-4xl ">
+          Welcome,{" "}
+          <span className="font-semibold text-cyan-900">{username}</span>
+        </h1>
+        <h1 className="text-xl font-light">Ready to start doing stuff?</h1>
+      </section>
+      <Button
+        className="col-span-1 row-span-1 text-lg font-semibold"
+        variant="shadow"
+        color="primary"
+        onClick={onOpen}
+      >
+        <FaPlus />
+        New task
+      </Button>
+      <AddTaskModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+        setShowFeedback={setShowFeedback}
+      />
 
-      {/* Task Add Form */}
-      <div className="flex flex-col items-center mb-6">
-        <Input
-          clearable
-          placeholder="Add a new task"
-          fullWidth
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          className="mb-4"
-        />
-        <Button auto onClick={addTask} color="gradient" className="w-full">
-          Add Task
-        </Button>
-      </div>
-
-      {/* Task List */}
-      <div className="flex flex-col items-center">
-        {tasks.length > 0 ? (
-          tasks.map((task) => (
-            <Card
-              key={task.id}
-              className="flex items-center justify-between w-full p-4 mb-4 bg-gray-100 rounded-lg shadow-md"
-            >
-              <p className="text-lg font-semibold">{task.name}</p>
-              <Button auto color="error" onClick={() => deleteTask(task.id)}>
-                Delete
-              </Button>
-            </Card>
-          ))
-        ) : (
-          <p className="mt-10 text-center text-gray-500">
-            No tasks yet. Add one above!
-          </p>
-        )}
-      </div>
+      {all_Tasks?.length == 0 ? (
+        <section className="col-span-8 border rounded-md row-span-7 bg-gray-100/30">
+          <h1 className="text-2xl text-center">No tasks yet</h1>
+        </section>
+      ) : (
+        all_Tasks?.map((task) => <TaskCard key={task._id} task={task} />)
+      )}
+      {showFeedback && (
+        <Toast message={showFeedback.message} type={showFeedback.type} />
+      )}
     </main>
   );
 };
