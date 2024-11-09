@@ -5,20 +5,21 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Checkbox,
-  Link,
   Button,
   Textarea,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createTask } from "../actions/TaskActions";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { createTask, getStatus } from "../actions/TaskActions";
 
 const schema = yup.object().shape({
   title: yup.string().required("Task name is required"),
   description: yup.string().required("Task description is required"),
+  status: yup.string().required("Please select a status"),
 });
 
 // eslint-disable-next-line react/prop-types
@@ -27,9 +28,15 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+  });
+
+  const { data: status, isLoading } = useQuery({
+    queryKey: ["status"],
+    queryFn: async () => getStatus(),
   });
 
   const addTask = useMutation({
@@ -54,7 +61,7 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
       setTimeout(() => {
         setShowFeedback(null);
       }, 5000);
-    }
+    },
   });
 
   const closeModal = () => {
@@ -64,6 +71,7 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
   const submitForm = (data) => {
     const timestamp = new Date().getTime();
     const formData = { ...data, timestamp };
+    reset();
     addTask.mutate(formData);
   };
 
@@ -79,8 +87,8 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
       placement="top-center"
     >
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1 text-2xl font-semibold text-cyan-900">
-          Create a new task
+        <ModalHeader className="flex flex-col gap-4 text-2xl font-semibold text-cyan-900">
+          📝 Create a new task
         </ModalHeader>
         <form
           onSubmit={handleSubmit(submitForm)}
@@ -109,18 +117,23 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
               errorMessage={errors.description?.message}
               {...register("description")}
             />
-            <div className="flex justify-between px-1 py-2">
-              <Checkbox
-                classNames={{
-                  label: "text-small",
-                }}
-              >
-                Remember me
-              </Checkbox>
-              <Link color="primary" href="#" size="sm">
-                Forgot password?
-              </Link>
-            </div>
+            <Select
+              label="Status"
+              color="secondary"
+              variant="flat"
+              isRequired
+              placeholder="Select a status"
+              isInvalid={!!errors.status}
+              errorMessage={errors.status?.message}
+              defaultSelectedKeys={["To Do"]}
+              {...register("status")}
+            >
+              {status?.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
+            </Select>
           </ModalBody>
         </form>
         <ModalFooter>

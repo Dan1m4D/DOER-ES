@@ -19,3 +19,14 @@ export const createTask = async (data) => {
     console.error(error);
   }
 };
+
+
+// get all statuses
+export const getStatus = async () => {
+  try {
+    const res = await axios.get("/task/status/list").then((res) => res.data);
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
+};

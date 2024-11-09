@@ -9,6 +9,7 @@ def create_task(db: Session, task: TaskCreate, user_email) -> Task:
     new_task = Task(
         title=task.title,
         description=task.description,
+        status=task.status,
         user_email=user_email,
         timestamp=task.timestamp,
     )

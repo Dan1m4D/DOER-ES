@@ -49,3 +49,8 @@ def create_new_task(
     new_task = create_task(db, task, user_email)
 
     return JSONResponse(content="Task created succesfully", status_code=201)
+
+@router.get("/status/list")
+@authenticated()
+def get_status_list(request: Request):
+    return JSONResponse(content=["To Do", "In Progress", "Done"], status_code=200)
