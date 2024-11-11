@@ -50,7 +50,12 @@ def create_new_task(
 
     return JSONResponse(content="Task created succesfully", status_code=201)
 
-@router.get("/status/list")
+@router.get("/status")
 @authenticated()
 def get_status_list(request: Request):
     return JSONResponse(content=["To Do", "In Progress", "Done"], status_code=200)
+
+@router.get("/priority")
+@authenticated()
+def get_priority_list(request: Request):
+    return JSONResponse(content=["Low", "Medium", "High", "Hightest"], status_code=200)
