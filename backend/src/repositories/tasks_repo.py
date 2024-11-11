@@ -11,6 +11,7 @@ def create_task(db: Session, task: TaskCreate, user_email) -> Task:
         description=task.description,
         status=task.status,
         priority=task.priority,
+        deadline=int(task.deadline),  # Ensure this is an integer
         user_email=user_email,
         timestamp=task.timestamp,
     )
@@ -28,7 +29,7 @@ def get_tasks(db: Session, user_email: str):
 
 def update_task(db: Session, task_id: int, task: TaskUpdate) -> Task:
     task_to_update = db.query(Task).filter(Task.id == task_id).first()
-    for key, value in task.dict(exclude_unset=True).items():
+    for key, value in task.model_dump(exclude_unset=True).items():
         setattr(task_to_update, key, value)
     db.commit()
     db.refresh(task_to_update)

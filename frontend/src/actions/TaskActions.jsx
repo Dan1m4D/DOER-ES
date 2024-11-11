@@ -14,6 +14,7 @@ export const getTasks = async () => {
 // create a new task
 export const createTask = async (data) => {
   try {
+    console.log(data);
     await axios.post("/task", data)
   } catch (error) {
     console.error(error);
