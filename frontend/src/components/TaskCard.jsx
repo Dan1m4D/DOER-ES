@@ -63,7 +63,7 @@ const TaskCard = ({ task, className }) => {
         <p className="text-sm">
           {renderEmoji(task?.priority)} {task?.priority}{" "}
         </p>
-        <Chip className="flex p-2" color="default">
+        <Chip className="flex p-2">
           🕒 {formatTimestamp(parseInt(task?.deadline))}
         </Chip>
         <p className="text-sm ">
@@ -78,6 +78,7 @@ export default TaskCard;
 
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
+  if (isNaN(date)) return "No date";
   return date.toLocaleString("pt-PT", {
     day: "numeric",
     month: "short",
