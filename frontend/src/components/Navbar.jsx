@@ -12,10 +12,10 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import logo from "../assets/logo.svg";
-import { CgLogOut } from "react-icons/cg";
+import { CgLogOut, CgMenuBoxed } from "react-icons/cg";
 import { useUserStore } from "../stores/userStore";
 import { googleLogout } from "@react-oauth/google";
-import "../index.css"
+import "../index.css";
 import { useNavigate } from "react-router-dom";
 
 const AppNavbar = () => {
@@ -32,8 +32,8 @@ const AppNavbar = () => {
     googleLogout();
     logout();
     navigate("/login");
-  }
-  
+  };
+
   return (
     <Navbar position="sticky" variant="floating">
       <NavbarBrand className="flex items-center" as={Link} href={"/"}>
@@ -62,6 +62,14 @@ const AppNavbar = () => {
               <DropdownItem key="profile" className="gap-2 h-14">
                 <p className="font-semibold">Signed in as</p>
                 <p className="font-semibold">{email}</p>
+              </DropdownItem>
+              <DropdownItem
+                key="dashboard"
+                as={Link}
+                href="/my"
+                startContent={<CgMenuBoxed />}
+              >
+                Dashboard
               </DropdownItem>
               <DropdownItem
                 key="logout"

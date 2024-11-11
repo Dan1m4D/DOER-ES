@@ -9,17 +9,20 @@ import {
   Textarea,
   Select,
   SelectItem,
+  MenuItem,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { createTask, getStatus } from "../actions/TaskActions";
+import { createTask, getStatus, getPriorities } from "../actions/TaskActions";
+import clsx from "clsx";
 
 const schema = yup.object().shape({
   title: yup.string().required("Task name is required"),
   description: yup.string().required("Task description is required"),
   status: yup.string().required("Please select a status"),
+  priority: yup.string().required("Please select a priority"),
 });
 
 // eslint-disable-next-line react/prop-types
@@ -29,14 +32,19 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, values },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const { data: status, isLoading } = useQuery({
+  const { data: status } = useQuery({
     queryKey: ["status"],
     queryFn: async () => getStatus(),
+  });
+
+  const { data: priorities } = useQuery({
+    queryKey: ["priorities"],
+    queryFn: async () => getPriorities(),
   });
 
   const addTask = useMutation({
@@ -117,23 +125,43 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
               errorMessage={errors.description?.message}
               {...register("description")}
             />
-            <Select
-              label="Status"
-              color="secondary"
-              variant="flat"
-              isRequired
-              placeholder="Select a status"
-              isInvalid={!!errors.status}
-              errorMessage={errors.status?.message}
-              defaultSelectedKeys={["To Do"]}
-              {...register("status")}
-            >
-              {status?.map((item) => (
-                <SelectItem key={item} value={item}>
-                  {item}
-                </SelectItem>
-              ))}
-            </Select>
+
+            <section className="flex gap-2">
+              <Select
+                label="Status"
+                color="default"
+                variant="flat"
+                isRequired
+                placeholder="Select a status"
+                isInvalid={!!errors.status}
+                errorMessage={errors.status?.message}
+                defaultSelectedKeys={["To Do"]}
+                {...register("status")}
+              >
+                {status?.map((item) => (
+                  <SelectItem key={item} value={item}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </Select>
+              <Select
+                label="Priority"
+                color="secondary"
+                variant="flat"
+                isRequired
+                placeholder="Select a priority"
+                isInvalid={!!errors.priority}
+                errorMessage={errors.priority?.message}
+                defaultSelectedKeys={["Low"]}
+                {...register("priority")}
+              >
+                {priorities?.map((item) => (
+                  <SelectItem key={item} value={item}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </Select>
+            </section>
           </ModalBody>
         </form>
         <ModalFooter>

@@ -21,6 +21,7 @@ next-env.d.ts
 
 # pnpm
 .pnpm-store/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
