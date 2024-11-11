@@ -9,20 +9,27 @@ import {
   Textarea,
   Select,
   SelectItem,
-  MenuItem,
+  DatePicker,
 } from "@nextui-org/react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { createTask, getStatus, getPriorities } from "../actions/TaskActions";
-import clsx from "clsx";
+import { today, getLocalTimeZone, now, toCalendarDateTime } from "@internationalized/date";
 
 const schema = yup.object().shape({
   title: yup.string().required("Task name is required"),
   description: yup.string().required("Task description is required"),
   status: yup.string().required("Please select a status"),
   priority: yup.string().required("Please select a priority"),
+  deadline: yup
+    .mixed()
+    .transform((data) => {
+      return new Date(toCalendarDateTime(data).toString()).getTime();
+      }
+    )
+    .required("Please select a due date"),
 });
 
 // eslint-disable-next-line react/prop-types
@@ -32,7 +39,8 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
     register,
     handleSubmit,
     reset,
-    formState: { errors, values },
+    formState: { errors },
+    control,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -79,6 +87,7 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
   const submitForm = (data) => {
     const timestamp = new Date().getTime();
     const formData = { ...data, timestamp };
+    console.log(formData);
     reset();
     addTask.mutate(formData);
   };
@@ -162,6 +171,25 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
                 ))}
               </Select>
             </section>
+            <Controller
+              name="deadline"
+              control={control}
+              defaultValue={now(getLocalTimeZone())}
+              render={({ field }) => (
+                <DatePicker
+                  label="Deadline"
+                  color="primary"
+                  variant="flat"
+                  showMonthAndYearPickers
+                  hideTimeZone
+                  isRequired
+                  minValue={today(getLocalTimeZone())}
+                  isInvalid={!!errors.deadline}
+                  errorMessage={errors.deadline?.message}
+                  {...field}
+                />
+              )}
+            />
           </ModalBody>
         </form>
         <ModalFooter>

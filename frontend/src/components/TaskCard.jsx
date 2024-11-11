@@ -60,7 +60,12 @@ const TaskCard = ({ task, className }) => {
         <p className="text-pretty opacity-80 text-cyan-900 line-clamp-2 text-ellipsis ">
           {task?.description}
         </p>
-        <p className="text-sm">{renderEmoji(task?.priority)} {task?.priority} </p>
+        <p className="text-sm">
+          {renderEmoji(task?.priority)} {task?.priority}{" "}
+        </p>
+        <Chip className="flex p-2" color="default">
+          🕒 {formatTimestamp(parseInt(task?.deadline))}
+        </Chip>
         <p className="text-sm ">
           Created at {formatTimestamp(task?.timestamp)}
         </p>
@@ -80,4 +85,4 @@ const formatTimestamp = (timestamp) => {
     hour: "numeric",
     minute: "numeric",
   });
-};  
+};
