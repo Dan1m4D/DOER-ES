@@ -22,7 +22,11 @@ def create_task(db: Session, task: TaskCreate, user_email) -> Task:
     return new_task
 
 def get_task(db: Session, task_id: int) -> Task:
-    return db.query(Task).filter(Task.id == task_id).first()
+    query = db.query(Task).filter(Task.id == task_id)
+    task = query.first()
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
 
 def get_tasks(db: Session, user_email: str):
     return db.query(Task).filter(Task.user_email == user_email).all()
@@ -34,3 +38,15 @@ def update_task(db: Session, task_id: int, task: TaskUpdate) -> Task:
     db.commit()
     db.refresh(task_to_update)
     return task_to_update
+
+def delete_task(db: Session, task_id: int):
+    task_to_delete = db.query(Task).filter(Task.id == task_id).first()
+    print("===========================================================")
+    print(task_to_delete)
+    
+    if task_to_delete is None:
+        return False
+
+    db.delete(task_to_delete)
+    db.commit()
+    return True

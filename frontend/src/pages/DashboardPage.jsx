@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, useDisclosure } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import { getTasks } from "../actions/TaskActions";
@@ -16,7 +16,7 @@ const Dashboard = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   // get user tasks
-  const { data: all_Tasks, isLoading } = useQuery({
+  const { data: all_Tasks } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => getTasks(),
   });
@@ -58,37 +58,12 @@ const Dashboard = () => {
           />
         </section>
       ) : (
-        <section className="grid col-span-8 gap-2 grid-cols-subgrid grid-rows-subgrid row-span-9 ">
+        <section className="grid col-span-8 gap-3 grid-cols-subgrid grid-rows-subgrid row-span-9 ">
           {all_Tasks?.map((task) => (
-            <TaskCard key={task._id} task={task} className="row-span-1" />
+            <TaskCard key={task._id} task={task} className="row-span-1"  setShowFeedback={setShowFeedback} />
           ))}
         </section>
       )}
-      {/* <article className="grid-cols-8 col-span-8 gap-2">
-        <section className="col-span-2 rounded bg-blue-500/20">
-          {all_Tasks?.filter((task) => task.status === "To Do").map(task => (
-            <TaskCard key={task.id} task={task} className="row-span-1" />
-          ))} 
-          
-        </section>
-        <section className="col-span-2 rounded bg-amber-500/20">
-          {all_Tasks?.filter((task) => task.status === "In Progress").map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </section>
-        <section className="col-span-2 rounded bg-green-500/20">
-          {all_Tasks?.filter((task) => task.status === "Done").map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </section>
-        <section className="col-span-2 rounded bg-gray-500/20">
-          {all_Tasks?.filter((task) => {
-            return task.status !== "To Do" && task.status !== "In Progress" && task.status !== "Done";
-          }).map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </section>
-      </article> */}
       {showFeedback && (
         <Toast message={showFeedback.message} type={showFeedback.type} />
       )}

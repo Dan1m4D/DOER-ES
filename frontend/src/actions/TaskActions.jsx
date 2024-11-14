@@ -41,3 +41,12 @@ export const getPriorities = async () => {
     console.error(error);
   }
 };
+
+// delete a task
+export const deleteTask = async (id) => {
+  try {
+    await axios.delete(`/task/${id}`);
+  } catch (error) {
+    console.error(error);
+  }
+};
