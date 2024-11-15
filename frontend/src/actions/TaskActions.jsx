@@ -21,6 +21,15 @@ export const createTask = async (data) => {
   }
 };
 
+// update a task
+export const updateTask = async (data) => {
+  try {
+    await axios.put(`/task/${data.id}`, data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
 // get all statuses
 export const getStatus = async () => {

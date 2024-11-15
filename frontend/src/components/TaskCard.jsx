@@ -21,7 +21,7 @@ import {
 } from "react-icons/fa";
 import { deleteTask } from "../actions/TaskActions";
 
-const TaskCard = ({ task, className, setShowFeedback }) => {
+const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
   const queryClient = useQueryClient();
 
   const onDelete = useMutation({
@@ -104,7 +104,7 @@ const TaskCard = ({ task, className, setShowFeedback }) => {
             {formatTimestamp(parseInt(task?.deadline))}
           </Chip>
           <p className="text-sm text-cyan-900/70">
-            Created @ {formatTimestamp(task?.timestamp)}
+            {task?.updated_at ? `Updated @ ${formatTimestamp(task?.updated_at)}` : `Created @ ${formatTimestamp(task?.created_at)}`}
           </p>
         </section>
       </CardBody>
@@ -127,6 +127,7 @@ const TaskCard = ({ task, className, setShowFeedback }) => {
           startContent={<FaPen />}
           variant="flat"
           className="hover:bg-slate-700/10"
+          onClick={() => onEdit(task)}
         />
         <Button
           size="small"

@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..auth import authenticated, validate_token
-from ..repositories.tasks_repo import get_tasks, create_task, get_task, delete_task
+from ..repositories.tasks_repo import get_tasks, create_task, get_task, delete_task, update_task
 from ..schemas import TaskCreate, TaskUpdate
 from ..models import Task
 from typing import List
@@ -26,10 +26,10 @@ def get_all_tasks(request: Request, db: Session = Depends(get_db)):
 
     # get all tasks
     tasks = get_tasks(db, user_email)
-    print("===========================================================")
-    print(tasks)
-    print("===========================================================")
 
+    print("====================================================================================================")
+    print(tasks)
+    print("====================================================================================================")
     return tasks
 
 
@@ -53,34 +53,49 @@ def create_new_task(task: TaskCreate, request: Request, db: Session = Depends(ge
 @authenticated()
 def delete_task_(task_id: int, request: Request, db: Session = Depends(get_db)):
     # get request access_token
-    print("===========================================================")
-    print("delete_task")
-    print("===========================================================")
-    print(task_id)
-    print("===========================================================")
-    print(request.cookies.get("access_token"))
-    print("===========================================================")
     access_token = request.cookies.get("access_token")
+
     # validate token
     idinfo = validate_token(access_token)
+
     # get user email
     user_email = idinfo.get("email")
 
-    print("===========================================================")
-    print("user_email: ", user_email)
-    print("===========================================================")
-
     # get task
-    task = get_task(db, task_id)
+    task = get_task(db, task_id, user_email)
     
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    if delete_task(db, task_id):
+    if delete_task(db, task_id, user_email):
         return JSONResponse(content="Task deleted succesfully", status_code=200)
     else:
-        return JSONResponse(content="There was an error while deleting your task", status_code=404)
+        return HTTPException(status_code=403, detail="Not authorized to delete this task")
    
+@router.put("/{task_id}")
+@authenticated()
+def update_task_(task_id: int, task: TaskUpdate, request: Request, db: Session = Depends(get_db)):
+    # get request access_token
+    access_token = request.cookies.get("access_token")
+
+    # validate token
+    idinfo = validate_token(access_token)
+
+    # get user email
+    user_email = idinfo.get("email")
+
+    # get task
+    old_task = get_task(db, task_id, user_email)
+
+    if not old_task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    # update task
+    update_task(db, task_id, task)
+    return JSONResponse(content="Task updated succesfully", status_code=200)
+
+
+    pass
 
 
 @router.get("/status")

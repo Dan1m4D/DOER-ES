@@ -8,10 +8,13 @@ import AddTaskModal from "../components/AddTaskModal";
 import Toast from "../components/Toast";
 import TaskCard from "../components/TaskCard";
 import { not_found } from "../assets/images";
+import { set } from "react-hook-form";
 
 const Dashboard = () => {
   const username = useUserStore((state) => state.username);
   const [showFeedback, setShowFeedback] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
@@ -20,6 +23,18 @@ const Dashboard = () => {
     queryKey: ["tasks"],
     queryFn: async () => getTasks(),
   });
+
+  const onEdit = (task) => {
+    setIsEdit(true);
+    setTaskToEdit(task);
+    onOpen();
+  }
+
+  const onCreate = () => {
+    setIsEdit(false);
+    setTaskToEdit(null);
+    onOpen();
+  }
 
   return (
     <main className="grid grid-cols-8 gap-4 p-4 mx-[5%] my-4 grow">
@@ -44,6 +59,9 @@ const Dashboard = () => {
         onClose={onClose}
         onOpenChange={onOpenChange}
         setShowFeedback={setShowFeedback}
+        task={taskToEdit || null}
+        isEdit={isEdit}
+        setIsEdit={setIsEdit}
       />
 
       {all_Tasks?.length == 0 ? (
@@ -60,7 +78,7 @@ const Dashboard = () => {
       ) : (
         <section className="grid col-span-8 gap-3 grid-cols-subgrid grid-rows-subgrid row-span-9 ">
           {all_Tasks?.map((task) => (
-            <TaskCard key={task._id} task={task} className="row-span-1"  setShowFeedback={setShowFeedback} />
+            <TaskCard key={task.id} task={task} className="row-span-1"  setShowFeedback={setShowFeedback} onEdit={onEdit} />
           ))}
         </section>
       )}
