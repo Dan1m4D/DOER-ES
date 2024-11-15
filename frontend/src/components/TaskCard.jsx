@@ -6,6 +6,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Checkbox,
   Chip,
 } from "@nextui-org/react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -19,7 +20,7 @@ import {
   FaRunning,
   FaTrash,
 } from "react-icons/fa";
-import { deleteTask } from "../actions/TaskActions";
+import { deleteTask, updateTask } from "../actions/TaskActions";
 
 const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
   const queryClient = useQueryClient();
@@ -39,11 +40,27 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
         message: "An error occurred while deleting the task",
         type: "error",
       });
-    }
+    },
   });
 
+  const onCompleteTask = useMutation({
+    queryKey: ["completeTask"],
+    mutationFn: () => updateTask({ ...task, completed: true }),
+    onSuccess: () => {
+      queryClient.invalidateQueries("tasks");
+      setShowFeedback({
+        message: "Task completed successfully",
+        type: "success",
+      });
+    },
+    onError: () => {
+      setShowFeedback({
+        message: "An error occurred while completing the task",
+        type: "error",
+      });
+    },
+  });
 
-  
   const renderIcon = (status) => {
     switch (status) {
       case "To Do":
@@ -78,7 +95,7 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
       className={clsx("col-span-2 border-l-8", className, {
         "border-blue-500": task?.status === "To Do",
         "border-amber-500": task?.status === "In Progress",
-        "border-green-500": task?.status === "Done",
+        "border-green-500": task?.status === "Done" || task?.completed,
         "border-red-500": task?.status === "Cancelled",
       })}
     >
@@ -99,12 +116,24 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
         <p className="text-pretty opacity-80 text-cyan-900 line-clamp-2 text-ellipsis min-h-max">
           {task?.description}
         </p>
+        <Checkbox onChange={() => onCompleteTask.mutate()} >
+          Mark as completed
+        </Checkbox>
+
+        
         <section className="flex flex-col w-full gap-1">
-          <Chip color="danger" size="lg" startContent={<FaCalendar />} className="flex gap-2 py-2">
+          <Chip
+            color="danger"
+            size="lg"
+            startContent={<FaCalendar />}
+            className="flex gap-2 py-2"
+          >
             {formatTimestamp(parseInt(task?.deadline))}
           </Chip>
           <p className="text-sm text-cyan-900/70">
-            {task?.updated_at ? `Updated @ ${formatTimestamp(task?.updated_at)}` : `Created @ ${formatTimestamp(task?.created_at)}`}
+            {task?.updated_at
+              ? `${task?.completed ? "Completed" : 'Updated'} @ ${formatTimestamp(task?.updated_at)}`
+              : `Created @ ${formatTimestamp(task?.timestamp)}`}
           </p>
         </section>
       </CardBody>
@@ -121,20 +150,19 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
           {renderEmoji(task?.priority)} {task?.priority}
         </Chip>
         <ButtonGroup>
-
-        <Button
-          size="small"
-          startContent={<FaPen />}
-          variant="flat"
-          className="hover:bg-slate-700/10"
-          onClick={() => onEdit(task)}
-        />
-        <Button
-          size="small"
-          startContent={<FaTrash />}
-          color="danger"
-          onClick={() => onDelete.mutate(task?.id)}
-        />
+          <Button
+            size="small"
+            startContent={<FaPen />}
+            variant="flat"
+            className="hover:bg-slate-700/10"
+            onClick={() => onEdit(task)}
+          />
+          <Button
+            size="small"
+            startContent={<FaTrash />}
+            color="danger"
+            onClick={() => onDelete.mutate(task?.id)}
+          />
         </ButtonGroup>
       </CardFooter>
     </Card>
