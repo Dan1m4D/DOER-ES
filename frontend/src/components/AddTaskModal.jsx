@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+import { useEffect } from "react";
 import {
   Input,
   Modal,
@@ -15,8 +17,19 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { createTask, getStatus, getPriorities } from "../actions/TaskActions";
-import { today, getLocalTimeZone, now, toCalendarDateTime } from "@internationalized/date";
+import {
+  createTask,
+  updateTask,
+  getStatus,
+  getPriorities,
+} from "../actions/TaskActions";
+import {
+  today,
+  getLocalTimeZone,
+  now,
+  toCalendarDateTime,
+  fromAbsolute,
+} from "@internationalized/date";
 
 const schema = yup.object().shape({
   title: yup.string().required("Task name is required"),
@@ -27,13 +40,19 @@ const schema = yup.object().shape({
     .mixed()
     .transform((data) => {
       return new Date(toCalendarDateTime(data).toString()).getTime();
-      }
-    )
-    .required("Please select a due date"),
+    })
+    .required("Please select a deadline"),
 });
 
 // eslint-disable-next-line react/prop-types
-const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
+const AddTaskModal = ({
+  isOpen,
+  onClose,
+  onOpenChange,
+  setShowFeedback,
+  isEdit,
+  task,
+}) => {
   const queryClient = useQueryClient();
   const {
     register,
@@ -43,7 +62,27 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
     control,
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      title: "",
+      description: "",
+      status: "To Do",
+      priority: "Medium",
+      deadline: now(getLocalTimeZone()),
+    },
   });
+
+  useEffect(() => {
+    console.log(task);
+    if (task) {
+      reset({
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        priority: task.priority,
+        deadline: fromAbsolute(task.deadline),
+      });
+    }
+  }, [task, reset]);
 
   const { data: status } = useQuery({
     queryKey: ["status"],
@@ -80,7 +119,33 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
     },
   });
 
+  const editTask = useMutation({
+    mutationKey: ["editTask"],
+    mutationFn: async (data) => updateTask(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries("tasks");
+      setShowFeedback({
+        type: "success",
+        message: "Task updated successfully",
+      });
+      setTimeout(() => {
+        setShowFeedback(null);
+      }, 5000);
+      closeModal();
+    },
+    onError: (error) => {
+      setShowFeedback({
+        type: "error",
+        message: error.message,
+      });
+      setTimeout(() => {
+        setShowFeedback(null);
+      }, 5000);
+    },
+  });
+
   const closeModal = () => {
+    reset();
     onClose();
   };
 
@@ -89,14 +154,19 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
     const formData = { ...data, timestamp };
     console.log(formData);
     reset();
-    addTask.mutate(formData);
+    if (task) {
+      const updated_at = new Date().getTime();
+      editTask.mutate({ ...formData, id: task.id, updated_at });
+    } else {
+      addTask.mutate(formData);
+    }
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      onClose={onClose}
+      onClose={closeModal}
       backdrop="opaque"
       isDismissable={false}
       isKeyboardDismissDisabled={false}
@@ -105,7 +175,7 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
     >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-4 text-2xl font-semibold text-cyan-900">
-          📝 Create a new task
+          {isEdit ? "📝 Edit task" : "📝 Create a new task"}
         </ModalHeader>
         <form
           onSubmit={handleSubmit(submitForm)}
@@ -114,7 +184,6 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
         >
           <ModalBody>
             <Input
-              autoFocus
               label="Task name"
               color="primary"
               variant="flat"
@@ -122,17 +191,18 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
               {...register("title")}
               isInvalid={!!errors.title}
               errorMessage={errors.title?.message}
+              defaultValue={task ? task.title : ""}
             />
             <Textarea
               label="Description"
               placeholder="Write a short description of the task"
-              type="password"
               color="primary"
               variant="bordered"
               isRequired
               isInvalid={!!errors.description}
               errorMessage={errors.description?.message}
               {...register("description")}
+              defaultValue={task ? task.description : ""}
             />
 
             <section className="flex gap-2">
@@ -144,7 +214,7 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
                 placeholder="Select a status"
                 isInvalid={!!errors.status}
                 errorMessage={errors.status?.message}
-                defaultSelectedKeys={["To Do"]}
+                defaultSelectedKeys={task ? [task.status] : ["To Do"]}
                 {...register("status")}
               >
                 {status?.map((item) => (
@@ -161,7 +231,6 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
                 placeholder="Select a priority"
                 isInvalid={!!errors.priority}
                 errorMessage={errors.priority?.message}
-                defaultSelectedKeys={["Low"]}
                 {...register("priority")}
               >
                 {priorities?.map((item) => (
@@ -197,7 +266,7 @@ const AddTaskModal = ({ isOpen, onClose, onOpenChange, setShowFeedback }) => {
             Cancel
           </Button>
           <Button color="primary" type="submit" form="add_task">
-            Add Task
+            {isEdit ? "Update" : "Create"}
           </Button>
         </ModalFooter>
       </ModalContent>

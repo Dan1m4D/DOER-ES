@@ -8,6 +8,7 @@ class Task(Base):
     title = Column(String, index=True)
     description = Column(String)
     timestamp = Column(BigInteger)
+    updated_at = Column(BigInteger, default=None)
     deadline = Column(BigInteger)
     priority = Column(String, default=None)
     status = Column(String, default="To Do")

@@ -21,6 +21,15 @@ export const createTask = async (data) => {
   }
 };
 
+// update a task
+export const updateTask = async (data) => {
+  try {
+    await axios.put(`/task/${data.id}`, data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
 // get all statuses
 export const getStatus = async () => {
@@ -37,6 +46,15 @@ export const getPriorities = async () => {
   try {
     const res = await axios.get("/task/priority").then((res) => res.data);
     return res;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// delete a task
+export const deleteTask = async (id) => {
+  try {
+    await axios.delete(`/task/${id}`);
   } catch (error) {
     console.error(error);
   }

@@ -16,7 +16,8 @@ class TaskCreate(TaskBase):
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    update_timestamp: Optional[int] = None
+    timestamp: Optional[int] = None
+    updated_at: Optional[int] = None
     user_email: Optional[str] = None
     priority: Optional[str] = None
     deadline: Optional[int] = None
