@@ -66,7 +66,7 @@ const AddTaskModal = ({
       title: "",
       description: "",
       status: "To Do",
-      priority: "Medium",
+      priority: "Low",
       deadline: now(getLocalTimeZone()),
     },
   });
@@ -82,7 +82,7 @@ const AddTaskModal = ({
         deadline: fromAbsolute(task.deadline),
       });
     }
-  }, [task, reset]);
+  }, [task, isEdit, reset]);
 
   const { data: status } = useQuery({
     queryKey: ["status"],
@@ -145,7 +145,13 @@ const AddTaskModal = ({
   });
 
   const closeModal = () => {
-    reset();
+    reset({
+      title: "",
+      description: "",
+      status: "To Do",
+      priority: "Low",
+      deadline: now(getLocalTimeZone()),
+    });
     onClose();
   };
 
@@ -183,30 +189,40 @@ const AddTaskModal = ({
           className="flex-col gap-2"
         >
           <ModalBody>
-            <Input
-              label="Task name"
-              color="primary"
-              variant="flat"
-              isRequired
-              {...register("title")}
-              isInvalid={!!errors.title}
-              errorMessage={errors.title?.message}
-              defaultValue={task ? task.title : ""}
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Task name"
+                  color="primary"
+                  variant="flat"
+                  isRequired
+                  isInvalid={!!errors.title}
+                  errorMessage={errors.title?.message}
+                />
+              )}
             />
-            <Textarea
-              label="Description"
-              placeholder="Write a short description of the task"
-              color="primary"
-              variant="bordered"
-              isRequired
-              isInvalid={!!errors.description}
-              errorMessage={errors.description?.message}
-              {...register("description")}
-              defaultValue={task ? task.description : ""}
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <Textarea
+                  {...field}
+                  label="Description"
+                  placeholder="Write a short description of the task"
+                  color="primary"
+                  variant="bordered"
+                  isRequired
+                  isInvalid={!!errors.description}
+                  errorMessage={errors.description?.message}
+                />
+              )}
             />
-
             <section className="flex gap-2">
               <Select
+                {...register("status")}
                 label="Status"
                 color="default"
                 variant="flat"
@@ -214,8 +230,6 @@ const AddTaskModal = ({
                 placeholder="Select a status"
                 isInvalid={!!errors.status}
                 errorMessage={errors.status?.message}
-                defaultSelectedKeys={task ? [task.status] : ["To Do"]}
-                {...register("status")}
               >
                 {status?.map((item) => (
                   <SelectItem key={item} value={item}>
@@ -223,7 +237,9 @@ const AddTaskModal = ({
                   </SelectItem>
                 ))}
               </Select>
+
               <Select
+                {...register("priority")}
                 label="Priority"
                 color="secondary"
                 variant="flat"
@@ -231,7 +247,6 @@ const AddTaskModal = ({
                 placeholder="Select a priority"
                 isInvalid={!!errors.priority}
                 errorMessage={errors.priority?.message}
-                {...register("priority")}
               >
                 {priorities?.map((item) => (
                   <SelectItem key={item} value={item}>
@@ -243,9 +258,9 @@ const AddTaskModal = ({
             <Controller
               name="deadline"
               control={control}
-              defaultValue={now(getLocalTimeZone())}
               render={({ field }) => (
                 <DatePicker
+                  {...field}
                   label="Deadline"
                   color="primary"
                   variant="flat"

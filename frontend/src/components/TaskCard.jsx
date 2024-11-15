@@ -89,14 +89,21 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
     }
   };
 
+  const renderColor = () => {
+    if (task?.completed) {
+      return task?.updated_at > task?.deadline ? "warning" : "success"
+    }
+    return "danger"
+  }
+
   return (
     <Card
       key={task?.id}
-      className={clsx("col-span-2 border-l-8", className, {
-        "border-blue-500": task?.status === "To Do",
-        "border-amber-500": task?.status === "In Progress",
-        "border-green-500": task?.status === "Done" || task?.completed,
-        "border-red-500": task?.status === "Cancelled",
+      className={clsx("col-span-2 ", className, {
+        "border-blue-500 border-l-8": task?.status === "To Do",
+        "border-amber-500 border-l-8": task?.status === "In Progress",
+        "border-green-500 border-l-8": task?.status === "Done",
+        "border-green-500 border-4 bg-green-100/20": task?.completed,
       })}
     >
       <CardHeader className="flex justify-between text-xl font-semibold line-clamp-1 text-wrap">
@@ -105,25 +112,28 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
           className={clsx("flex p-2", {
             "bg-blue-500 text-white": task?.status === "To Do",
             "bg-amber-500 text-white": task?.status === "In Progress",
-            "bg-green-500 text-white": task?.status === "Done",
+            "bg-green-500 text-white":
+              task?.status === "Done" || task?.completed,
           })}
-          startContent={renderIcon(task?.status)}
+          startContent={renderIcon(task?.completed ? "Done" : task?.status)}
         >
-          {task?.status}
+          {task?.completed ? "Completed" : task?.status}
         </Chip>
       </CardHeader>
       <CardBody className="justify-between gap-1">
         <p className="text-pretty opacity-80 text-cyan-900 line-clamp-2 text-ellipsis min-h-max">
           {task?.description}
         </p>
-        <Checkbox onChange={() => onCompleteTask.mutate()} >
+        {!task?.completed && (
+          
+        <Checkbox onChange={() => onCompleteTask.mutate()}>
           Mark as completed
         </Checkbox>
+        )}
 
-        
         <section className="flex flex-col w-full gap-1">
           <Chip
-            color="danger"
+            color={renderColor()}
             size="lg"
             startContent={<FaCalendar />}
             className="flex gap-2 py-2"
@@ -132,12 +142,14 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
           </Chip>
           <p className="text-sm text-cyan-900/70">
             {task?.updated_at
-              ? `${task?.completed ? "Completed" : 'Updated'} @ ${formatTimestamp(task?.updated_at)}`
+              ? `${
+                  task?.completed ? "Completed" : "Updated"
+                } @ ${formatTimestamp(task?.updated_at)}`
               : `Created @ ${formatTimestamp(task?.timestamp)}`}
           </p>
         </section>
       </CardBody>
-      <CardFooter className="flex justify-between">
+      {!task?.completed && <CardFooter className="flex justify-between">
         <Chip
           size="large"
           className={clsx("flex py-4 text-lg", {
@@ -164,7 +176,7 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
             onClick={() => onDelete.mutate(task?.id)}
           />
         </ButtonGroup>
-      </CardFooter>
+      </CardFooter>}
     </Card>
   );
 };
