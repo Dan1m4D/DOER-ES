@@ -49,7 +49,7 @@ const Dashboard = () => {
         className="col-span-1 row-span-1 text-lg font-semibold place-self-center"
         variant="shadow"
         color="primary"
-        onClick={onOpen}
+        onClick={onCreate}
       >
         <FaPlus />
         New task
