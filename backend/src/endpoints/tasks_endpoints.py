@@ -54,14 +54,24 @@ def get_all_tasks(
             reverse=True if order_by == "desc" else False,
         )
     elif sort_by == "Priority":
+        priority_order = {"Low": 1, "Medium": 2, "High": 3, "Highest": 4}
         tasks = sorted(
             tasks,
-            key=lambda x: x.priority,
+            key=lambda x: priority_order.get(x.priority, 0),
             reverse=True if order_by == "desc" else False,
         )
     elif sort_by == "Status":
+        status_order = {"To Do": 1, "In Progress": 2, "Done": 3}
         tasks = sorted(
-            tasks, key=lambda x: x.status, reverse=True if order_by == "desc" else False
+            tasks,
+            key=lambda x: (status_order.get(x.status, 0), x.completed),
+            reverse=True if order_by == "desc" else False,
+        )
+    elif sort_by == "Name":
+        tasks = sorted(
+            tasks,
+            key=lambda x: x.title,
+            reverse=False if order_by == "desc" else True,
         )
 
 
