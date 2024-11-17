@@ -45,7 +45,7 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
 
   const onCompleteTask = useMutation({
     queryKey: ["completeTask"],
-    mutationFn: () => updateTask({ ...task, completed: true }),
+    mutationFn: () => updateTask({ ...task, status: "Done", completed: true }),
     onSuccess: () => {
       queryClient.invalidateQueries("tasks");
       setShowFeedback({
@@ -91,10 +91,10 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
 
   const renderColor = () => {
     if (task?.completed) {
-      return task?.updated_at > task?.deadline ? "warning" : "success"
+      return task?.updated_at > task?.deadline ? "warning" : "success";
     }
-    return "danger"
-  }
+    return "danger";
+  };
 
   return (
     <Card
@@ -125,10 +125,9 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
           {task?.description}
         </p>
         {!task?.completed && (
-          
-        <Checkbox onChange={() => onCompleteTask.mutate()}>
-          Mark as completed
-        </Checkbox>
+          <Checkbox onChange={() => onCompleteTask.mutate()}>
+            Mark as completed
+          </Checkbox>
         )}
 
         <section className="flex flex-col w-full gap-1">
@@ -149,34 +148,37 @@ const TaskCard = ({ task, className, setShowFeedback, onEdit }) => {
           </p>
         </section>
       </CardBody>
-      {!task?.completed && <CardFooter className="flex justify-between">
+
+      <CardFooter className="flex justify-between">
         <Chip
           size="large"
           className={clsx("flex py-4 text-lg", {
-            "bg-blue-500/90 text-white": task?.priority === "Low",
-            "bg-amber-500/90 text-white": task?.priority === "Medium",
-            "bg-red-500/90 text-white": task?.priority === "High",
-            "bg-purple-500/90 text-white": task?.priority === "Highest",
+            "bg-blue-500/80 text-white": task?.priority === "Low",
+            "bg-amber-500/80 text-white": task?.priority === "Medium",
+            "bg-red-500/80 text-white": task?.priority === "High",
+            "bg-purple-500/80 text-white": task?.priority === "Highest",
           })}
         >
           {renderEmoji(task?.priority)} {task?.priority}
         </Chip>
-        <ButtonGroup>
-          <Button
-            size="small"
-            startContent={<FaPen />}
-            variant="flat"
-            className="hover:bg-slate-700/10"
-            onClick={() => onEdit(task)}
-          />
-          <Button
-            size="small"
-            startContent={<FaTrash />}
-            color="danger"
-            onClick={() => onDelete.mutate(task?.id)}
-          />
-        </ButtonGroup>
-      </CardFooter>}
+        {!task?.completed && (
+          <ButtonGroup>
+            <Button
+              size="small"
+              startContent={<FaPen />}
+              variant="flat"
+              className="hover:bg-slate-700/10"
+              onClick={() => onEdit(task)}
+            />
+            <Button
+              size="small"
+              startContent={<FaTrash />}
+              color="danger"
+              onClick={() => onDelete.mutate(task?.id)}
+            />
+          </ButtonGroup>
+        )}
+      </CardFooter>
     </Card>
   );
 };

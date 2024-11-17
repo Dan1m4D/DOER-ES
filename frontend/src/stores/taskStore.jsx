@@ -1,15 +1,28 @@
-import { createStore } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { create } from "zustand";
 
-export const useTaskStore = createStore(persist((set) => ({
-    status: [],
-    tasks: [],
-    currentTask: null,
+export const useTaskStore = create((set) => ({
+  sorts: ["Creation", "Priority", "Deadline", "Name", "Status"],
 
-    setStatus: (status) => set((state) => ({ ...state, status })),
-    setTasks: (tasks) => set((state) => ({ ...state, tasks })),
-    setCurrentTask: (currentTask) => set((state) => ({ ...state, currentTask })),
-}), {
-    name: "task-storage",
-    storage: createJSONStorage(() => sessionStorage),
-  }));
+  sort_by: "Creation",
+  order_by: "asc",
+  status_by: "",
+  priority_by: "",
+
+  toggleOrder: () =>
+    set((state) => ({
+      ...state,
+      order_by: state.order_by === "asc" ? "desc" : "asc",
+    })),
+  setSortBy: (sort_by) => set((state) => ({ ...state, sort_by })),
+  setStatusBy: (status_by) => set((state) => ({ ...state, status_by })),
+  setPriorityBy: (priority_by) => set((state) => ({ ...state, priority_by })),
+
+  reset: () =>
+    set((state) => ({
+      ...state,
+      sort_by: "Creation",
+      order_by: "asc",
+      status_by: "",
+      priority_by: "",
+    })),
+}));
