@@ -64,7 +64,7 @@ def get_all_tasks(
         status_order = {"To Do": 1, "In Progress": 2, "Done": 3}
         tasks = sorted(
             tasks,
-            key=lambda x: (status_order.get(x.status, 0), x.completed),
+            key=lambda x: (status_order.get(x.status, 0), x.completed or False),
             reverse=True if order_by == "desc" else False,
         )
     elif sort_by == "Name":

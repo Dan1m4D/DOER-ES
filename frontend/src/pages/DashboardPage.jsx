@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import {
   Button,
@@ -6,15 +7,22 @@ import {
   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
-import { getTasks, getPriorities, getStatus } from "../actions/TaskActions";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import {
+  getTasks,
+  getPriorities,
+  getStatus,
+  deleteTask,
+  updateTask
+} from "../actions/TaskActions";
 import { useUserStore } from "../stores/userStore";
 import { FaPlus, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
 import AddTaskModal from "../components/AddTaskModal";
 import Toast from "../components/Toast";
-import TaskCard from "../components/TaskCard";
 import { not_found } from "../assets/images";
 import { useTaskStore } from "../stores/taskStore";
+import CardView from "./views/CardView";
+import ListView from "./views/ListView";
 
 const Dashboard = () => {
   const username = useUserStore((state) => state.username);
@@ -48,12 +56,6 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    console.log("=====================================");
-    console.log("order_by", order_by);
-    console.log("sort_by", sort_by);
-    console.log("status_by", status_by);
-    console.log("priority_by", priority_by);
-    console.log("=====================================");
     refetch();
   }, [order_by, sort_by, status_by, priority_by, refetch]);
 
@@ -65,6 +67,52 @@ const Dashboard = () => {
   const { data: priorities } = useQuery({
     queryKey: ["priorities"],
     queryFn: async () => getPriorities(),
+  });
+
+  const onDelete = useMutation({
+    queryKey: ["deleteTask"],
+    mutationFn: async (id) => {
+      if (
+        window.confirm(
+          "Are you sure you want to delete this task? This action cannot be undone."
+        )
+      ) {
+        deleteTask(id);
+      } else {
+        throw new Error("Task deletion cancelled");
+      }
+    },
+    onSuccess: () => {
+      refetch();
+      setShowFeedback({
+        message: "Task deleted successfully",
+        type: "success",
+      });
+    },
+    onError: () => {
+      setShowFeedback({
+        message: "An error occurred while deleting the task",
+        type: "error",
+      });
+    },
+  });
+
+  const onCompleteTask = useMutation({
+    queryKey: ["completeTask"],
+    mutationFn: (task) => updateTask({ ...task, status: "Done", completed: true }),
+    onSuccess: () => {
+      refetch();
+      setShowFeedback({
+        message: "Task completed successfully",
+        type: "success",
+      });
+    },
+    onError: () => {
+      setShowFeedback({
+        message: "An error occurred while completing the task",
+        type: "error",
+      });
+    },
   });
 
   const onEdit = (task) => {
@@ -112,11 +160,12 @@ const Dashboard = () => {
         label="Status"
         onChange={(value) => setStatusBy(value.target.value)}
       >
-        {status && [...status, "Completed"].map((s) => (
-          <SelectItem key={s} value={s}>
-            {s}
-          </SelectItem>
-        ))}
+        {status &&
+          [...status, "Completed"].map((s) => (
+            <SelectItem key={s} value={s}>
+              {s}
+            </SelectItem>
+          ))}
       </Select>
 
       <Select
@@ -163,18 +212,19 @@ const Dashboard = () => {
           />
         </section>
       ) : (
-        <section className="grid grid-cols-8 col-span-8 gap-3 grid-rows-subgrid row-span-9 ">
-          {all_Tasks?.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              className="row-span-1"
-              setShowFeedback={setShowFeedback}
-              onEdit={onEdit}
-            />
-          ))}
-        </section>
+        <CardView
+          tasks={all_Tasks}
+          onCompleteTask={onCompleteTask}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
       )}
+      <ListView
+        tasks={all_Tasks}
+        onCompleteTask={onCompleteTask}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
       {showFeedback && (
         <Toast message={showFeedback.message} type={showFeedback.type} />
       )}
