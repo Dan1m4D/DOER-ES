@@ -4,7 +4,7 @@ import { renderIcon } from '../../utils'
 
 const KanbanView = ({ tasks, onCompleteTask, onEdit, onDelete }) => {
   return (
-    <article className='grid grid-cols-3 col-span-8 gap-4 grow'>
+    <article className='grid grid-cols-3 col-span-8 gap-4 row-span-9 grow'>
         <section className='col-span-1 gap-2 p-2 border-2 border-blue-500 rounded-lg place-content-start bg-blue-500/10'>
             <h1 className='flex items-center m-2 mb-8 text-2xl font-bold text-blue-700 text-start'>{renderIcon("To Do")} To Do</h1>
             {tasks?.filter(task => task.status === 'To Do').map((task) => (

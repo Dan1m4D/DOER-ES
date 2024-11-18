@@ -44,6 +44,10 @@ const Dashboard = () => {
   const setStatusBy = useTaskStore((state) => state.setStatusBy);
   const setPriorityBy = useTaskStore((state) => state.setPriorityBy);
 
+  // views
+  const view = useTaskStore((state) => state.view);
+  const setView = useTaskStore((state) => state.setView);
+
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   // get user tasks
@@ -129,6 +133,68 @@ const Dashboard = () => {
     onOpen();
   };
 
+  const renderView = () => {
+    if (isLoading) {
+      return (
+        <p className="flex flex-col col-span-8 auto-rows-min row-span-9 place-content-center place-items-center">
+          <Spinner color="primary" /> Loading...
+        </p>
+      );
+    }
+    if (all_Tasks?.length == 0) {
+      return (
+        <section className="flex flex-col col-span-8 auto-rows-min row-span-9 place-content-center place-items-center">
+          <h1 className="col-span-2 text-2xl font-semibold text-cyan-900">
+            You don&apos;t have any tasks yet 😢
+          </h1>
+          <img
+            src={not_found}
+            alt="Not found"
+            className="aspect-square w-[30rem]"
+          />
+        </section>
+      );
+    }
+    switch (view) {
+      case "Card":
+        return (
+          <CardView
+            tasks={all_Tasks}
+            onCompleteTask={onCompleteTask}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        );
+      case "List":
+        return (
+          <ListView
+            tasks={all_Tasks}
+            onCompleteTask={onCompleteTask}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        );
+      case "Kanban":
+        return (
+          <KanbanView
+            tasks={all_Tasks}
+            onCompleteTask={onCompleteTask}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        );
+      default:
+        return (
+          <CardView
+            tasks={all_Tasks}
+            onCompleteTask={onCompleteTask}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        );
+    }
+  }
+
   return (
     <main className="grid grid-cols-8 gap-4 p-4 mx-[5%] my-4 grow">
       <section className="col-span-7 gap-2 rounded-md place-content-center">
@@ -156,6 +222,19 @@ const Dashboard = () => {
         isEdit={isEdit}
         setIsEdit={setIsEdit}
       />
+
+      <Select
+        className="col-span-1 col-start-1 row-start-2"
+        label="View"
+        defaultSelectedKeys={[view]}
+        onChange={(e) => setView(e.target.value)}
+      >
+        {["Card", "List", "Kanban"].map((v) => (
+          <SelectItem key={v} value={v}>
+            {v}
+          </SelectItem>
+        ))}
+      </Select>
 
       <Select
         className="col-span-1 col-start-5 row-start-2"
@@ -198,41 +277,7 @@ const Dashboard = () => {
         ))}
       </Select>
 
-      {isLoading ? (
-        <p className="flex flex-col col-span-8 auto-rows-min row-span-9 place-content-center place-items-center">
-          <Spinner color="primary" /> Loading...
-        </p>
-      ) : all_Tasks?.length == 0 ? (
-        <section className="flex flex-col col-span-8 auto-rows-min row-span-9 place-content-center place-items-center">
-          <h1 className="col-span-2 text-2xl font-semibold text-cyan-900">
-            You don&apos;t have any tasks yet 😢
-          </h1>
-          <img
-            src={not_found}
-            alt="Not found"
-            className="aspect-square w-[30rem]"
-          />
-        </section>
-      ) : (
-        <CardView
-          tasks={all_Tasks}
-          onCompleteTask={onCompleteTask}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      )}
-      <ListView
-        tasks={all_Tasks}
-        onCompleteTask={onCompleteTask}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />
-      <KanbanView
-        tasks={all_Tasks}
-        onCompleteTask={onCompleteTask}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />
+      {renderView()}
       {showFeedback && (
         <Toast message={showFeedback.message} type={showFeedback.type} />
       )}

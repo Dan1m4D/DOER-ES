@@ -79,23 +79,27 @@ const TaskCard = ({ task, className, onCompleteTask, onEdit, onDelete }) => {
         >
           {renderEmoji(task?.priority)} {task?.priority}
         </Chip>
-        {!task?.completed && (
-          <ButtonGroup>
+
+        <ButtonGroup>
+          {!task?.completed && (
             <Button
               size="small"
               startContent={<FaPen />}
               variant="flat"
+              isIconOnly
               className="hover:bg-slate-700/10"
               onClick={() => onEdit(task)}
             />
-            <Button
-              size="small"
-              startContent={<FaTrash />}
-              color="danger"
-              onClick={() => onDelete.mutate(task?.id)}
-            />
-          </ButtonGroup>
-        )}
+          )}
+
+          <Button
+            size="small"
+            startContent={<FaTrash />}
+            isIconOnly
+            color="danger"
+            onClick={() => onDelete.mutate(task?.id)}
+          />
+        </ButtonGroup>
       </CardFooter>
     </Card>
   );

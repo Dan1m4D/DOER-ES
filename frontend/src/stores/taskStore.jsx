@@ -7,6 +7,7 @@ export const useTaskStore = create((set) => ({
   order_by: "asc",
   status_by: "",
   priority_by: "",
+  view: "Card",
 
   toggleOrder: () =>
     set((state) => ({
@@ -16,6 +17,7 @@ export const useTaskStore = create((set) => ({
   setSortBy: (sort_by) => set((state) => ({ ...state, sort_by })),
   setStatusBy: (status_by) => set((state) => ({ ...state, status_by })),
   setPriorityBy: (priority_by) => set((state) => ({ ...state, priority_by })),
+  setView: (view) => set((state) => ({ ...state, view })),
 
   reset: () =>
     set((state) => ({
