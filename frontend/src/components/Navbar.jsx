@@ -17,6 +17,7 @@ import { useUserStore } from "../stores/userStore";
 import { googleLogout } from "@react-oauth/google";
 import "../index.css";
 import { useNavigate } from "react-router-dom";
+import { useTaskStore } from "../stores/taskStore";
 
 const AppNavbar = () => {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
@@ -26,11 +27,13 @@ const AppNavbar = () => {
     (state) => state.profile_picture_url
   );
   const logout = useUserStore((state) => state.logout);
+  const reset = useTaskStore((state) => state.reset);
   const navigate = useNavigate();
 
   const onLogout = () => {
     googleLogout();
     logout();
+    reset();
     navigate("/login");
   };
 

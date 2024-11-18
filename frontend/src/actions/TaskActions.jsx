@@ -1,9 +1,18 @@
 import axios from "./axios.jsx";
 
 // get all tasks
-export const getTasks = async () => {
+export const getTasks = async (
+  order_by,
+  sort_by,
+  status_by = "",
+  priority_by = ""
+) => {
   try {
-    const res = await axios.get("/task").then((res) => res.data);
+    const res = await axios
+      .get(
+        `/task?order_by=${order_by}&sort_by=${sort_by}&status_by=${status_by}&priority_by=${priority_by}`
+      )
+      .then((res) => res.data);
     console.log(res);
     return res;
   } catch (error) {
@@ -15,7 +24,7 @@ export const getTasks = async () => {
 export const createTask = async (data) => {
   try {
     console.log(data);
-    await axios.post("/task", data)
+    await axios.post("/task", data);
   } catch (error) {
     console.error(error);
   }
@@ -29,7 +38,6 @@ export const updateTask = async (data) => {
     console.error(error);
   }
 };
-
 
 // get all statuses
 export const getStatus = async () => {
