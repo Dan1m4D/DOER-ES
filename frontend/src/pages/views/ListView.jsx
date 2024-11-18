@@ -23,7 +23,7 @@ const ListView = ({ tasks, onCompleteTask, onEdit, onDelete }) => {
   return (
     <Table
       aria-label="Task List"
-      className="col-span-8 gap-2"
+      className="col-span-8 gap-2 grow"
       emptyContent={"No rows to display."}
       removeWrapper
     >

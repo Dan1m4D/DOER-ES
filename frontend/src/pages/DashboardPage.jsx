@@ -13,7 +13,7 @@ import {
   getPriorities,
   getStatus,
   deleteTask,
-  updateTask
+  updateTask,
 } from "../actions/TaskActions";
 import { useUserStore } from "../stores/userStore";
 import { FaPlus, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
@@ -23,6 +23,7 @@ import { not_found } from "../assets/images";
 import { useTaskStore } from "../stores/taskStore";
 import CardView from "./views/CardView";
 import ListView from "./views/ListView";
+import KanbanView from "./views/KanbanView";
 
 const Dashboard = () => {
   const username = useUserStore((state) => state.username);
@@ -99,7 +100,8 @@ const Dashboard = () => {
 
   const onCompleteTask = useMutation({
     queryKey: ["completeTask"],
-    mutationFn: (task) => updateTask({ ...task, status: "Done", completed: true }),
+    mutationFn: (task) =>
+      updateTask({ ...task, status: "Done", completed: true }),
     onSuccess: () => {
       refetch();
       setShowFeedback({
@@ -220,6 +222,12 @@ const Dashboard = () => {
         />
       )}
       <ListView
+        tasks={all_Tasks}
+        onCompleteTask={onCompleteTask}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+      <KanbanView
         tasks={all_Tasks}
         onCompleteTask={onCompleteTask}
         onEdit={onEdit}

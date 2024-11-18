@@ -3,7 +3,7 @@ import TaskCard from "../../components/TaskCard";
 
 const CardView = ({ tasks, onCompleteTask, onEdit, onDelete }) => {
   return (
-    <section className="grid grid-cols-8 col-span-8 gap-3 grid-rows-subgrid row-span-9 ">
+    <section className="grid grid-cols-8 col-span-8 gap-3 grid-rows-subgrid row-span-9 first-letter:grow">
       {tasks?.map((task) => (
         <TaskCard
           key={task.id}
