@@ -27,6 +27,7 @@ import KanbanView from "./views/KanbanView";
 
 const Dashboard = () => {
   const username = useUserStore((state) => state.username);
+  const access_token = useUserStore((state) => state.access_token);
   const [showFeedback, setShowFeedback] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
@@ -57,7 +58,8 @@ const Dashboard = () => {
     refetch,
   } = useQuery({
     queryKey: ["tasks"],
-    queryFn: async () => getTasks(order_by, sort_by, status_by, priority_by),
+    queryFn: async () =>
+      getTasks(order_by, sort_by, access_token, status_by, priority_by),
   });
 
   useEffect(() => {
@@ -66,12 +68,12 @@ const Dashboard = () => {
 
   const { data: status } = useQuery({
     queryKey: ["status"],
-    queryFn: async () => getStatus(),
+    queryFn: async () => getStatus(access_token),
   });
 
   const { data: priorities } = useQuery({
     queryKey: ["priorities"],
-    queryFn: async () => getPriorities(),
+    queryFn: async () => getPriorities(access_token),
   });
 
   const onDelete = useMutation({
@@ -82,7 +84,7 @@ const Dashboard = () => {
           "Are you sure you want to delete this task? This action cannot be undone."
         )
       ) {
-        deleteTask(id);
+        deleteTask(id, access_token);
       } else {
         throw new Error("Task deletion cancelled");
       }
@@ -105,7 +107,7 @@ const Dashboard = () => {
   const onCompleteTask = useMutation({
     queryKey: ["completeTask"],
     mutationFn: (task) =>
-      updateTask({ ...task, status: "Done", completed: true }),
+      updateTask({ ...task, status: "Done", completed: true }, access_token),
     onSuccess: () => {
       refetch();
       setShowFeedback({
@@ -193,7 +195,7 @@ const Dashboard = () => {
           />
         );
     }
-  }
+  };
 
   return (
     <main className="grid grid-cols-8 gap-4 p-4 mx-[5%] my-4 grow">

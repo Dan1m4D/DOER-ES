@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { FaExclamationTriangle, FaCheckCircle, FaExclamationCircle, FaInfoCircle } from "react-icons/fa";
 /* import PropTypes from "prop-types";*/
 import clsx from "clsx";

@@ -18,8 +18,10 @@ import {
   renderIcon,
   renderTime,
 } from "../utils";
+import { useUserStore } from "../stores/userStore";
 
 const TaskCard = ({ task, className, onCompleteTask, onEdit, onDelete }) => {
+  const access_token = useUserStore((state) => state.access_token);
   return (
     <Card
       key={task?.id}
@@ -59,7 +61,7 @@ const TaskCard = ({ task, className, onCompleteTask, onEdit, onDelete }) => {
             {formatTimestamp(parseInt(task?.deadline))}
           </Chip>
           {!task?.completed && (
-            <Checkbox onChange={() => onCompleteTask.mutate(task)}>
+            <Checkbox onChange={() => onCompleteTask.mutate(task, access_token)}>
               Mark as completed
             </Checkbox>
           )}
@@ -97,7 +99,7 @@ const TaskCard = ({ task, className, onCompleteTask, onEdit, onDelete }) => {
             startContent={<FaTrash />}
             isIconOnly
             color="danger"
-            onClick={() => onDelete.mutate(task?.id)}
+            onClick={() => onDelete.mutate(task?.id, access_token)}
           />
         </ButtonGroup>
       </CardFooter>

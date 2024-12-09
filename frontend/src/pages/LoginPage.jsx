@@ -49,7 +49,7 @@ const LoginPage = () => {
     setCookie("access_token", res.credential);
 
     const profile = jwtDecode(credential);
-    login(profile.name, profile.email, profile.picture);
+    login(profile.name, profile.email, profile.picture, credential);
     setSuccess(true);
   };
 

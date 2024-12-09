@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
+import { useUserStore } from "../stores/userStore";
 import {
   Input,
   Modal,
@@ -53,6 +54,7 @@ const AddTaskModal = ({
   isEdit,
   task,
 }) => {
+  const access_token = useUserStore((state) => state.access_token);
   const queryClient = useQueryClient();
   const {
     register,
@@ -86,17 +88,17 @@ const AddTaskModal = ({
 
   const { data: status } = useQuery({
     queryKey: ["status"],
-    queryFn: async () => getStatus(),
+    queryFn: async () => getStatus(access_token),
   });
 
   const { data: priorities } = useQuery({
     queryKey: ["priorities"],
-    queryFn: async () => getPriorities(),
+    queryFn: async () => getPriorities(access_token),
   });
 
   const addTask = useMutation({
     mutationKey: ["addTask"],
-    mutationFn: async (data) => createTask(data),
+    mutationFn: async (data) => createTask(data, access_token),
     onSuccess: () => {
       queryClient.invalidateQueries("tasks");
       setShowFeedback({
@@ -121,7 +123,7 @@ const AddTaskModal = ({
 
   const editTask = useMutation({
     mutationKey: ["editTask"],
-    mutationFn: async (data) => updateTask(data),
+    mutationFn: async (data) => updateTask(data, access_token),
     onSuccess: () => {
       queryClient.invalidateQueries("tasks");
       setShowFeedback({
@@ -135,7 +137,6 @@ const AddTaskModal = ({
     },
     onError: (error) => {
       setShowFeedback({
-        type: "error",
         message: error.message,
       });
       setTimeout(() => {
@@ -162,9 +163,9 @@ const AddTaskModal = ({
     reset();
     if (task) {
       const updated_at = new Date().getTime();
-      editTask.mutate({ ...formData, id: task.id, updated_at });
+      editTask.mutate({ ...formData, id: task.id, updated_at }, access_token  );
     } else {
-      addTask.mutate(formData);
+      addTask.mutate(formData, access_token);
     }
   };
 

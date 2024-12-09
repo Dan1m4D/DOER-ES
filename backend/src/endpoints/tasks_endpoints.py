@@ -29,7 +29,8 @@ def get_all_tasks(
     priority_by: str = "",
 ):
     # get request access_token
-    access_token = request.cookies.get("access_token")
+    #access_token = request.cookies.get("access_token")
+    access_token = request.headers.get("Authorization")
 
     # validate token
     idinfo = validate_token(access_token)
@@ -85,6 +86,7 @@ def get_all_tasks(
         tasks = [task for task in tasks if task.priority == priority_by]
 
     print(
+
         "===================================================================================================="
     )
     print(tasks)
@@ -98,7 +100,8 @@ def get_all_tasks(
 @authenticated()
 def create_new_task(task: TaskCreate, request: Request, db: Session = Depends(get_db)):
     # get request access_token
-    access_token = request.cookies.get("access_token")
+    #access_token = request.cookies.get("access_token")
+    access_token = request.headers.get("Authorization")
     # validate token
     idinfo = validate_token(access_token)
     # get user email
@@ -114,8 +117,8 @@ def create_new_task(task: TaskCreate, request: Request, db: Session = Depends(ge
 @authenticated()
 def delete_task_(task_id: int, request: Request, db: Session = Depends(get_db)):
     # get request access_token
-    access_token = request.cookies.get("access_token")
-
+    #access_token = request.cookies.get("access_token")
+    access_token = request.headers.get("Authorization")
     # validate token
     idinfo = validate_token(access_token)
 
@@ -142,7 +145,8 @@ def update_task_(
     task_id: int, task: TaskUpdate, request: Request, db: Session = Depends(get_db)
 ):
     # get request access_token
-    access_token = request.cookies.get("access_token")
+    #access_token = request.cookies.get("access_token")
+    access_token = request.headers.get("Authorization")
 
     # validate token
     idinfo = validate_token(access_token)
@@ -159,9 +163,6 @@ def update_task_(
     # update task
     update_task(db, task_id, task)
     return JSONResponse(content="Task updated succesfully", status_code=200)
-
-    pass
-
 
 @router.get("/status")
 @authenticated()

@@ -9,13 +9,15 @@ export const useUserStore = create(
       profile_picture_url: null,
       isLoggedIn: false,
       success: null,
+      access_token: null,
 
-      login: (username, email, profile_picture_url) => {
+      login: (username, email, profile_picture_url, credential) => {
         set(() => ({
           username: username,
           email: email,
           profile_picture_url: profile_picture_url,
           isLoggedIn: true,
+          access_token: credential,
         }));
       },
       setSuccess: (success) => {
@@ -30,6 +32,7 @@ export const useUserStore = create(
           profile_picture_url: null,
           isLoggedIn: false,
           success: null,
+          access_token: null,
         })),
     }),
     {

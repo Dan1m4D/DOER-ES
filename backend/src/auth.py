@@ -23,7 +23,12 @@ def authenticated():
         def wrapper(*args, **kwargs):
 
             request = kwargs.get("request", None)
-            access_token = request.cookies.get("access_token")
+            #access_token = request.cookies.get("access_token")
+            access_token = request.headers.get("Authorization")
+            print("====================================================================================================")
+            print("request ",request)
+            print("access_token ",access_token)
+            print("====================================================================================================")
 
             if not access_token:
                 raise HTTPException(

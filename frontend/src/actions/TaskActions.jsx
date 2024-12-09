@@ -4,13 +4,19 @@ import axios from "./axios.jsx";
 export const getTasks = async (
   order_by,
   sort_by,
-  status_by = "",
-  priority_by = ""
+  access_token,
+  status_by = null,
+  priority_by = null,
 ) => {
   try {
     const res = await axios
       .get(
-        `/task?order_by=${order_by}&sort_by=${sort_by}&status_by=${status_by}&priority_by=${priority_by}`
+        `/task?order_by=${order_by}&sort_by=${sort_by}&status_by=${status_by}&priority_by=${priority_by}`,
+        {
+          headers: {
+            Authorization: access_token,
+          },
+        }
       )
       .then((res) => res.data);
     console.log(res);
@@ -21,28 +27,50 @@ export const getTasks = async (
 };
 
 // create a new task
-export const createTask = async (data) => {
+export const createTask = async (data, access_token) => {
   try {
     console.log(data);
-    await axios.post("/task", data);
+    await axios.post(
+      "/task",
+      data,
+      {
+        headers: {
+          Authorization: access_token,
+        },
+      }
+    );
   } catch (error) {
     console.error(error);
   }
 };
 
 // update a task
-export const updateTask = async (data) => {
+export const updateTask = async (data, access_token) => {
   try {
-    await axios.put(`/task/${data.id}`, data);
+    await axios.put(
+      `/task/${data.id}`,
+      {
+        headers: {
+          Authorization: access_token,
+        },
+      },
+      data
+    );
   } catch (error) {
     console.error(error);
   }
 };
 
 // get all statuses
-export const getStatus = async () => {
+export const getStatus = async (access_token) => {
   try {
-    const res = await axios.get("/task/status").then((res) => res.data);
+    const res = await axios
+      .get("/task/status", {
+        headers: {
+          Authorization: access_token,
+        },
+      })
+      .then((res) => res.data);
     return res;
   } catch (error) {
     console.error(error);
@@ -50,9 +78,15 @@ export const getStatus = async () => {
 };
 
 // get all priorities
-export const getPriorities = async () => {
+export const getPriorities = async (access_token) => {
   try {
-    const res = await axios.get("/task/priority").then((res) => res.data);
+    const res = await axios
+      .get("/task/priority", {
+        headers: {
+          Authorization: access_token,
+        },
+      })
+      .then((res) => res.data);
     return res;
   } catch (error) {
     console.error(error);
@@ -60,9 +94,13 @@ export const getPriorities = async () => {
 };
 
 // delete a task
-export const deleteTask = async (id) => {
+export const deleteTask = async (id, access_token) => {
   try {
-    await axios.delete(`/task/${id}`);
+    await axios.delete(`/task/${id}`, {
+      headers: {
+        Authorization: access_token,
+      },
+    });
   } catch (error) {
     console.error(error);
   }
