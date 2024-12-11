@@ -24,7 +24,7 @@ def authenticated():
 
             request = kwargs.get("request", None)
             #access_token = request.cookies.get("access_token")
-            access_token = request.headers.get("Authorization")
+            access_token = request.headers.get("Credential")
             print("====================================================================================================")
             print("request ",request)
             print("access_token ",access_token)

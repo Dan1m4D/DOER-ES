@@ -14,7 +14,7 @@ export const getTasks = async (
         `/task?order_by=${order_by}&sort_by=${sort_by}&status_by=${status_by}&priority_by=${priority_by}`,
         {
           headers: {
-            Authorization: access_token,
+            Credential: access_token,
           },
         }
       )
@@ -35,7 +35,7 @@ export const createTask = async (data, access_token) => {
       data,
       {
         headers: {
-          Authorization: access_token,
+          Credential: access_token,
         },
       }
     );
@@ -51,7 +51,7 @@ export const updateTask = async (data, access_token) => {
       `/task/${data.id}`,
       {
         headers: {
-          Authorization: access_token,
+          Credential: access_token,
         },
       },
       data
@@ -67,7 +67,7 @@ export const getStatus = async (access_token) => {
     const res = await axios
       .get("/task/status", {
         headers: {
-          Authorization: access_token,
+          Credential: access_token,
         },
       })
       .then((res) => res.data);
@@ -83,7 +83,7 @@ export const getPriorities = async (access_token) => {
     const res = await axios
       .get("/task/priority", {
         headers: {
-          Authorization: access_token,
+          Credential: access_token,
         },
       })
       .then((res) => res.data);
@@ -98,7 +98,7 @@ export const deleteTask = async (id, access_token) => {
   try {
     await axios.delete(`/task/${id}`, {
       headers: {
-        Authorization: access_token,
+        Credential: access_token,
       },
     });
   } catch (error) {

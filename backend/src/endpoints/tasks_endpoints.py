@@ -30,7 +30,7 @@ def get_all_tasks(
 ):
     # get request access_token
     #access_token = request.cookies.get("access_token")
-    access_token = request.headers.get("Authorization")
+    access_token = request.headers.get("Credential")
 
     # validate token
     idinfo = validate_token(access_token)
@@ -101,7 +101,7 @@ def get_all_tasks(
 def create_new_task(task: TaskCreate, request: Request, db: Session = Depends(get_db)):
     # get request access_token
     #access_token = request.cookies.get("access_token")
-    access_token = request.headers.get("Authorization")
+    access_token = request.headers.get("Credential")
     # validate token
     idinfo = validate_token(access_token)
     # get user email
@@ -118,7 +118,7 @@ def create_new_task(task: TaskCreate, request: Request, db: Session = Depends(ge
 def delete_task_(task_id: int, request: Request, db: Session = Depends(get_db)):
     # get request access_token
     #access_token = request.cookies.get("access_token")
-    access_token = request.headers.get("Authorization")
+    access_token = request.headers.get("Credential")
     # validate token
     idinfo = validate_token(access_token)
 
@@ -146,7 +146,7 @@ def update_task_(
 ):
     # get request access_token
     #access_token = request.cookies.get("access_token")
-    access_token = request.headers.get("Authorization")
+    access_token = request.headers.get("Credential")
 
     # validate token
     idinfo = validate_token(access_token)
