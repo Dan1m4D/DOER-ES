@@ -5,7 +5,6 @@ import { Card, CardBody, Spinner } from "@nextui-org/react";
 import { GoogleLogin } from "@react-oauth/google";
 import { useUserStore } from "../stores/userStore";
 import { jwtDecode } from "jwt-decode";
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { login_image } from "../assets/images";
 import Toast from "../components/Toast";
@@ -20,8 +19,6 @@ const LoginPage = () => {
   const [notLoggedIn, setNotLoggedIn] = useState(
     searchParams.get("notLoggedIn")
   );
-  const [_cookies, setCookie] = useCookies();
-
   // redirect to dashboard if login is successful
   useEffect(() => {
     if (success) {
@@ -41,12 +38,11 @@ const LoginPage = () => {
   }, [notLoggedIn]);
 
 
-  // on successful login, set cookie and login user
+  // on successful login, login user
   const onSuccess = (res) => {
     const credential = res.credential;
 
     console.log(credential);
-    setCookie("access_token", res.credential);
 
     const profile = jwtDecode(credential);
     login(profile.name, profile.email, profile.picture, credential);
