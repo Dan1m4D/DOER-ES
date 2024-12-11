@@ -49,12 +49,12 @@ export const updateTask = async (data, access_token) => {
   try {
     await axios.put(
       `/task/${data.id}`,
+      data,
       {
         headers: {
           Credential: access_token,
         },
       },
-      data
     );
   } catch (error) {
     console.error(error);
