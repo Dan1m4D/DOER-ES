@@ -1,16 +1,23 @@
-## To run the API
+# DOER backend
+## Running the FastAPI + Uvicorn App
 
-- Create a venv
-```bash
-python3 -m venv venv
-```
+Follow these steps to set up and run the application using FastAPI and Uvicorn:
 
-- Run the venv
-```bash
-source venv/bin/activate
-```
+1. **Install Dependencies**:
+   - Ensure you have Python installed and create a virtual environment:
+     ```bash
+     python -m venv venv
+     source venv/bin/activate  # On Windows, use venv\\Scripts\\activate
+     ```
+   - Install the required dependencies from `requirements.txt`:
+     ```bash
+     pip install -r requirements.txt
+     ```
 
-- Run the backend
-```bash
-uvicorn main:app --reload
-```
+2. **Run the Development Server**:
+   - Start the Uvicorn server to run the FastAPI application:
+     ```bash
+     uvicorn app.main:app --reload
+     ```
+   - Replace `app.main:app` with the path to your application if it's different.
+

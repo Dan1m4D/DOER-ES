@@ -64,6 +64,33 @@ Follow these steps to add configurations to your hosts:
 
 ---
 
+## Running the Application with Docker Compose
+
+Follow these steps to set up and run the application using Docker Compose:
+
+1. **Install Docker and Docker Compose**:
+   - Download and install Docker and Docker Compose from the official [Docker website](https://www.docker.com/get-started).
+
+2. **Start Docker**:
+   - Ensure Docker is running on your system. On most systems, this happens automatically after installation. If not, start it manually:
+     ```bash
+     sudo systemctl start docker
+     ```
+
+3. **Run Docker Compose**:
+   - Navigate to the directory containing your `docker-compose.yml` file and start the application:
+     ```bash
+     docker-compose up --build
+     ```
+
+4. **Stop Docker Compose**:
+   - To stop the running containers, use:
+     ```bash
+     docker-compose down
+     ```
+
+---
+
 ## Links
 
 - ### API docs: 

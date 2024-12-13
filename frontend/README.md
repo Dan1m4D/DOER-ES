@@ -1,8 +1,23 @@
-# React + Vite
+# DOER frontend
+## Running the Vite + React App with pnpm
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Follow these steps to set up and run the application using pnpm:
 
-Currently, two official plugins are available:
+1. **Install pnpm**:
+   - If pnpm is not installed, install it globally using npm:
+     ```bash
+     npm install -g pnpm
+     ```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+2. **Install Dependencies**:
+   - Navigate to the frontend directory and install the required dependencies:
+     ```bash
+     cd frontend
+     pnpm install
+     ```
+
+3. **Run the Development Server**:
+   - Start the Vite development server:
+     ```bash
+     pnpm run dev
+     ```
