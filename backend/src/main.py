@@ -6,7 +6,11 @@ from .database import engine
 from .endpoints import tasks_endpoints
 
 # create app
-app = FastAPI()
+app = FastAPI(
+    title="Doer",
+    description="Doer is a task management application where you can create, update, delete, and view tasks. Track your tasks by status, priority, and deadline.",
+    version="1.0.0"
+)
 
 # create all tables
 Base.metadata.create_all(bind=engine)

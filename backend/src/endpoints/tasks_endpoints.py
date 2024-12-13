@@ -28,6 +28,16 @@ def get_all_tasks(
     status_by: str = "",
     priority_by: str = "",
 ):
+    """
+    Retrieve a list of tasks for the authenticated user, with sorting and filtering options.
+
+    - **sort_by**: The field to sort tasks by. Possible values: "Creation", "Deadline", "Priority", "Status", "Name".
+    - **order_by**: The order of sorting. Possible values: "asc" or "desc".
+    - **status_by**: Filter tasks by status (e.g., "Completed", "To Do", "In Progress", "Done").
+    - **priority_by**: Filter tasks by priority (e.g., "Low", "Medium", "High", "Highest").
+
+    Returns a list of tasks sorted and filtered as per the given criteria.
+    """
     # get request access_token
     #access_token = request.cookies.get("access_token")
     access_token = request.headers.get("Credential")
@@ -85,20 +95,19 @@ def get_all_tasks(
     if priority_by:
         tasks = [task for task in tasks if task.priority == priority_by]
 
-    print(
-
-        "===================================================================================================="
-    )
-    print(tasks)
-    print(
-        "===================================================================================================="
-    )
     return tasks
 
 
 @router.post("")
 @authenticated()
 def create_new_task(task: TaskCreate, request: Request, db: Session = Depends(get_db)):
+    """
+    Create a new task for the authenticated user.
+
+    - **task**: A task creation schema containing the task's title, description, deadline, priority, etc.
+
+    Returns a success message upon successful task creation.
+    """
     # get request access_token
     #access_token = request.cookies.get("access_token")
     access_token = request.headers.get("Credential")
@@ -116,6 +125,13 @@ def create_new_task(task: TaskCreate, request: Request, db: Session = Depends(ge
 @router.delete("/{task_id}")
 @authenticated()
 def delete_task_(task_id: int, request: Request, db: Session = Depends(get_db)):
+    """
+    Delete a specific task by its ID for the authenticated user.
+
+    - **task_id**: The ID of the task to delete.
+
+    Returns a success message if the task is successfully deleted, or a 403 error if the user is not authorized to delete the task.
+    """
     # get request access_token
     #access_token = request.cookies.get("access_token")
     access_token = request.headers.get("Credential")
@@ -144,6 +160,14 @@ def delete_task_(task_id: int, request: Request, db: Session = Depends(get_db)):
 def update_task_(
     task_id: int, task: TaskUpdate, request: Request, db: Session = Depends(get_db)
 ):
+    """
+    Update an existing task by its ID for the authenticated user.
+
+    - **task_id**: The ID of the task to update.
+    - **task**: A task update schema containing the updated information for the task.
+
+    Returns a success message upon successful task update.
+    """
     # get request access_token
     #access_token = request.cookies.get("access_token")
     access_token = request.headers.get("Credential")
@@ -167,10 +191,20 @@ def update_task_(
 @router.get("/status")
 @authenticated()
 def get_status_list(request: Request):
+    """
+    Retrieve the list of possible task statuses.
+
+    Returns a list of statuses: ["To Do", "In Progress", "Done"].
+    """
     return JSONResponse(content=["To Do", "In Progress", "Done"], status_code=200)
 
 
 @router.get("/priority")
 @authenticated()
 def get_priority_list(request: Request):
+    """
+    Retrieve the list of possible task priorities.
+
+    Returns a list of priorities: ["Low", "Medium", "High", "Highest"].
+    """
     return JSONResponse(content=["Low", "Medium", "High", "Highest"], status_code=200)
